@@ -14,7 +14,11 @@ export default function Home() {
       </Authenticated>
       <Unauthenticated>
         <div className="h-screen flex justify-center items-center">
-          <SignInButton mode="redirect" />
+          <div className="px-6 py-3 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition">
+            <SignInButton mode="redirect">
+              Sign In
+            </SignInButton>
+          </div>
         </div>
       </Unauthenticated>
     </>
