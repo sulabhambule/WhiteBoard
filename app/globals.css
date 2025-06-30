@@ -3,6 +3,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html,
+body {
+  @apply h-full;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
