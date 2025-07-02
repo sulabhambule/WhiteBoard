@@ -1,38 +1,34 @@
 'use client';
 
-import { useAuth } from '@clerk/nextjs';
-import { useEffect } from 'react';
-import { Loading } from '@/components/auth/loading';
+import { useOrganization } from "@clerk/nextjs";
+import { EmptyOrg } from "./_components/empty-org";
+import { BoardList } from "./_components/board-list";
 
-export default function Home() {
-  const { isLoaded, isSignedIn } = useAuth();
 
-  // Wait for Clerk auth to load
-  if (!isLoaded) {
-    return <Loading />;
-  }
+interface DashboardPageProps {
+  searchParams: {
+    search?: string;
+    favorites?: string;
+  };
+};
 
-  // Redirect if not signed in
-  if (!isSignedIn) {
-    return <RedirectToSignIn />;
-  }
-
-  // User is signed in
-  return <Content />;
+const DashboardPage = ({
+  searchParams,
+}: DashboardPageProps) => {
+  const { organization } = useOrganization();
+  return (
+    <div className='flex-1 h-[calc(100%-80px)] p-6'>
+      {!organization ? (
+        <EmptyOrg />
+      ) : (
+        <BoardList
+          orgId={organization.id}
+          query={searchParams}
+        />
+      )}
+    </div>
+  )
 }
 
-function Content() {
-  return <div>This is a dashboard</div>;
-}
 
-function RedirectToSignIn() {
-  useEffect(() => {
-    const redirectUrl = window.location.href;
-    const clerkDomain = 'sunny-cobra-80.accounts.dev';
-
-    const signInUrl = `https://${clerkDomain}/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`;
-    window.location.href = signInUrl;
-  }, []);
-
-  return null;
-}
+export default DashboardPage;
