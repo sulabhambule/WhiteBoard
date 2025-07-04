@@ -16,7 +16,8 @@ export const EmptyOrg = () => {
         Welcome to the BoardCollab
       </h2>
 
-      <p className="text-muted-foreground text-sm       mt-2">Create an organization to get started  
+      <p className="text-muted-foreground text-sm mt-2">
+        Create an organization to get started
       </p>
 
       <div className="mt-6">
@@ -28,7 +29,7 @@ export const EmptyOrg = () => {
           </DialogTrigger>
           <DialogContent className="p-6 bg-white rounded-2xl shadow-xl w-[480px]">
             <DialogTitle></DialogTitle>
-            <CreateOrganization/>
+            <CreateOrganization />
           </DialogContent>
         </Dialog>
       </div>

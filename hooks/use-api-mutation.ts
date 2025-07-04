@@ -14,11 +14,11 @@ export const useApiMutation = (mutationFunction: any) => {
       })
       .catch((error) => {
         throw error;
-      })
-  }
+      });
+  };
 
   return {
     mutate,
     pending,
-  }
-}
+  };
+};

@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import {mutation} from "./_generated/server";
+import { mutation } from "./_generated/server";
 
 const images = [
   "/placeholders/1.svg",
@@ -12,17 +12,17 @@ const images = [
   "/placeholders/8.svg",
   "/placeholders9.svg",
   "/placeholders/10.svg",
-]
+];
 
 export const create = mutation({
   args: {
     title: v.string(),
     orgId: v.string(),
   },
-  handler: async(ctx, args) => {
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
-    if(!identity) {
+    if (!identity) {
       throw new Error("Unauthirized");
     }
 
@@ -34,8 +34,8 @@ export const create = mutation({
       authorId: identity.subject,
       authorName: identity.name!,
       imageUrl: randomImage,
-    })
+    });
 
     return board;
-  }
-})
+  },
+});
