@@ -39,7 +39,7 @@ export const NewBoardButton = ({
       className={cn(
         "col-span-1 aspect-[100/127] bg-blue-600 rounded-lg hover:bg-blue-800 flex flex-col items-center justify-center py-6",
         (pending || disabled)
-          ? "opacity-75 cursor-not-allowed"
+          ? "opacity-75 cursor-not-allowed hover:bg-blue-600"
           : "cursor-pointer"
       )}
     >
