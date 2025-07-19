@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Hint } from "@/components/hints";
 import { uesRenameModal } from "@/store/use-rename-modal";
+import { Actions } from "@/components/actions";
+import { Menu } from "lucide-react";
 
 interface InfoProps {
   boardId: string;
@@ -64,13 +66,36 @@ export const Info = ({
         </Button>
       </Hint>
       <TabSeparator />
-      <Button
-        onClick={() => onOpen(data._id, data.title)}
-        variant="board"
-        className="text-base font-normal px-2"
+      <Hint label="Edit title">
+        <Button
+          onClick={() => onOpen(data._id, data.title)}
+          variant="board"
+          className="text-base font-normal px-2"
+        >
+          {data.title}
+        </Button>
+      </Hint>
+      <TabSeparator />
+      <Actions
+        id={data._id}
+        title={data.title}
+        side="bottom"
+        sideOffset={10}
       >
-        {data.title}
-      </Button>
+        <div>
+          <Hint
+            label="Main menu"
+            side="bottom"
+            sideOffset={10}
+          >
+            <Button
+              size="icon" variant="board"
+            >
+              <Menu />
+            </Button>
+          </Hint>
+        </div>
+      </Actions>
     </div >
   );
 }
