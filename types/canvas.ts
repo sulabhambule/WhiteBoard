@@ -10,11 +10,11 @@ export type Camera = {
 };
 
 export enum LayerType {
+  Text,
+  Note,
   Rectangle,
   Ellipse,
   Path,
-  Text,
-  Note,
 }
 
 export type RectangleLayer = {
@@ -76,8 +76,8 @@ export type Point = {
 export type XYWH = {
   x: number;
   y: number;
-  height: number;
   width: number;
+  height: number;
 };
 
 export enum Side {
@@ -92,14 +92,17 @@ export type CanvasState =
       mode: CanvasMode.None;
     }
   | {
+      mode: CanvasMode.Pressing;
+      origin: Point;
+    }
+  | {
       mode: CanvasMode.SelectionNet;
       origin: Point;
       current?: Point;
-      // origin : from where we are going to start selecting and current is the current point when stop selecting , so its help in the selction and do canvas things.
     }
   | {
-      mode: CanvasMode.Pressing;
-      origin: Point;
+      mode: CanvasMode.Translating;
+      current: Point;
     }
   | {
       mode: CanvasMode.Inserting;
@@ -110,16 +113,12 @@ export type CanvasState =
         | LayerType.Note;
     }
   | {
-      mode: CanvasMode.Pencil;
-    }
-  | {
       mode: CanvasMode.Resizing;
-      intialBoounds: XYWH;
+      initialBounds: XYWH;
       corner: Side;
     }
   | {
-      mode: CanvasMode.Translating;
-      current: Point;
+      mode: CanvasMode.Pencil;
     };
 
 export enum CanvasMode {
@@ -131,3 +130,10 @@ export enum CanvasMode {
   Resizing,
   Pencil,
 }
+
+export type Layer =
+  | RectangleLayer
+  | EllipseLayer
+  | PathLayer
+  | TextLayer
+  | NoteLayer;

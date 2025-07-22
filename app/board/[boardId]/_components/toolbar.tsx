@@ -13,11 +13,6 @@ import {
 import { ToolButton } from "./tool-button";
 import { CanvasMode, CanvasState, LayerType } from "@/types/canvas";
 
-// type CanvasState = {
-//   mode: CanvasMode;
-//   // add other properties as needed
-// };
-
 interface ToolbarProps {
   canvasState: CanvasState;
   setCanavasState: (newState: CanvasState) => void;
