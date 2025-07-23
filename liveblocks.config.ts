@@ -15,6 +15,7 @@ const client = createClient({
 
 type Presence = {
   cursor: { x: number; y: number } | null;
+  selection: string[];
 };
 
 type Storage = {
