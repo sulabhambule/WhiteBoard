@@ -18,33 +18,29 @@ export const LayerPreview = memo(({
 }: LayerPreviewProps) => {
   const layer = useStorage((root) => root.layers.get(id));
 
+  if (!layer) {
+    console.warn("Layer not found for id:", id);
+    return null;
+  }
+
   console.log({
     layer
   })
 
-  if (!layer) {
-    return null;
-  }
-
   switch (layer.type) {
     case LayerType.Rectangle:
       return (
-        <div>
-          <Rectangle
-            id={id}
-            layer={layer}
-            onPointerDown={onLayerPointerDown}
-            selectionColor={selectionColor}
-          />
-        </div>
+        <Rectangle
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
       );
     default:
-      console.warn("Unknown layer type");
+      console.warn("Unknown layer type:", layer.type);
       return null;
   }
-  return (
-    <div>
+});
 
-    </div>
-  )
-})
+LayerPreview.displayName = "LayerPreview";

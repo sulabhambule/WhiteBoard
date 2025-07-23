@@ -42,6 +42,7 @@ export const Canvas = ({
   // console.log(info);
 
   const layerIds = useStorage((root) => root.layerIds);
+  // console.log({ layerIds }, "Sulabh");
 
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: CanvasMode.None,
@@ -71,31 +72,35 @@ export const Canvas = ({
       return;
     }
 
-    const LiveLayerIds = storage.get("layerIds");
+    const liveLayerIds = storage.get("layerIds");
+
     const layerId = nanoid();
+
     const layer = new LiveObject({
       type: layerType,
       x: position.x,
       y: position.y,
-      height: 100,
       width: 100,
-      fill: lastUsedColor
+      height: 100,
+      fill: lastUsedColor,
     });
 
-    LiveLayerIds.push(layerId);
+    liveLayerIds.push(layerId);
     liveLayers.set(layerId, layer);
 
     setMyPresence({ selection: [layerId] }, { addToHistory: true });
-    setCanvasState({ mode: CanvasMode.None });
-
-  }, [lastUsedColor]);
+    setCanvasState({
+      mode: CanvasMode.None,
+    });
+  },
+    [lastUsedColor]);
 
   const onWheel = useCallback((e: React.WheelEvent) => {
-    console.log({
-      x: e.deltaX,
-      y: e.deltaY,
-    });
-    console.log("sndlkjsdlk")
+    // console.log({
+    //   x: e.deltaX,
+    //   y: e.deltaY,
+    // });
+    // console.log("sndlkjsdlk")
 
     setCamera((camera) => ({
       x: camera.x - e.deltaX,
@@ -135,7 +140,13 @@ export const Canvas = ({
     }
 
     history.resume();
-  }, [])
+  }, [
+    camera,
+    canvasState,
+    history,
+    insertLayer,
+    setCanvasState,
+  ])
 
   return (
     <main
