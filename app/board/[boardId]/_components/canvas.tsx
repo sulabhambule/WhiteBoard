@@ -537,14 +537,21 @@ export const Canvas = ({
           }
 
           <CursorPresence />
-          {pencilDraft && pencilDraft.length > 0 && (
-            <Path
-              fill={colorToCss(lastUsedColor)}
-              points={pencilDraft}
-              x={0}
-              y={0}
-            />
-          )}
+          {Array.isArray(pencilDraft) &&
+            pencilDraft.length > 0 &&
+            pencilDraft.every(
+              (pt) =>
+                Array.isArray(pt) &&
+                pt.length >= 2 &&
+                pt.every((num) => typeof num === "number")
+            ) && (
+              <Path
+                fill={colorToCss(lastUsedColor)}
+                points={pencilDraft as number[][]}
+                x={0}
+                y={0}
+              />
+            )}
         </g>
       </svg>
     </main>

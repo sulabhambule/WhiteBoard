@@ -139,17 +139,17 @@ export function penPointsToPathLayer(
     if (bottom < y) {
       bottom = y;
     }
-
-    return {
-      type: LayerType.Path,
-      x: left,
-      y: top,
-      width: right - left,
-      height: bottom - top,
-      fill: color,
-      points: points.map(([x, y, pressure]) => [x - left, y - top, pressure]),
-    };
   }
+
+  return {
+    type: LayerType.Path,
+    x: left,
+    y: top,
+    width: right - left,
+    height: bottom - top,
+    fill: color,
+    points: points.map(([x, y, pressure]) => [x - left, y - top, pressure]),
+  };
 }
 
 export function getSvgPathFromStroke(stroke: number[][]) {
