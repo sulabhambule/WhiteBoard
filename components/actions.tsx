@@ -13,6 +13,7 @@ import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
 import { Button } from "./ui/button";
 import { uesRenameModal } from "@/store/use-rename-modal";
+import { useRouter } from "next/navigation";
 
 interface ActionProps {
   children: React.ReactNode;
@@ -31,6 +32,7 @@ export const Actions = ({
 }: ActionProps) => {
 
   const { onOpen } = uesRenameModal();
+  const router = useRouter();
 
   const { mutate, pending } = useApiMutation(api.board.remove);
 
@@ -44,7 +46,10 @@ export const Actions = ({
 
   const onDelete = () => {
     mutate({ id })
-      .then(() => toast.success("Board deleted"))
+      .then(() => {
+        toast.success("Board deleted");
+        router.push("/");
+      })
       .catch(() => (toast.error("Failed to delete")));
   };
 
