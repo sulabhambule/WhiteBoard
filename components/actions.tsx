@@ -38,7 +38,7 @@ export const Actions = ({
 
   const onCopyLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin} / board / ${id}`,
+      `${window.location.origin}/board/${id}`,
     )
       .then(() => toast.success("Link copied"))
       .catch(() => toast.error("Failed to copy link"))
