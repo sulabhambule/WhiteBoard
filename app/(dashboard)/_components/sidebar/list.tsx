@@ -1,6 +1,6 @@
 "use client";
 
-import { useOrganization, useOrganizationList } from "@clerk/nextjs";
+import { useOrganizationList } from "@clerk/nextjs";
 import { Item } from "./item";
 
 export const List = () => {
@@ -10,7 +10,7 @@ export const List = () => {
     }
   });
 
-  if(!userMemberships.data?.length)  return null;
+  if (!userMemberships.data?.length) return null;
 
   return (
     <ul className="space-y-4">

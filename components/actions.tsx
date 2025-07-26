@@ -5,7 +5,6 @@ import { Link2, Pencil, Trash2 } from "lucide-react";
 import { ConfirmModal } from "./confirm-modal";
 import {
   DropdownMenu,
-  DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuContent
 } from "@/components/ui/dropdown-menu";

@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { Mouse, MousePointer2 } from "lucide-react";
+import { MousePointer2 } from "lucide-react";
 import { useOther } from "@/liveblocks.config";
 import { connectionIdToColor } from "@/lib/utils";
 

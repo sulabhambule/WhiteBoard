@@ -117,7 +117,7 @@ export const Toolbar = ({
           label="Redo"
           icon={Redo2}
           onClick={redo}
-          isDisabled={!canUndo}
+          isDisabled={!canRedo}
         />
       </div>
     </div>

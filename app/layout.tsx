@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import ConvexClientProvider from "@/providers/convex-client-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ModalProvider } from "@/providers/modal-provider";
+import { Suspense } from "react";
+import { Loading } from "@/components/auth/loading";
 
 
 const geistSans = Geist({
@@ -30,13 +32,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ClerkProvider>
-          <ConvexClientProvider>
-            <Toaster />
-            <ModalProvider />
-            {children}
-          </ConvexClientProvider>
-        </ClerkProvider>
+        <Suspense fallback={<Loading />}>
+          <ClerkProvider>
+            <ConvexClientProvider>
+              <Toaster />
+              <ModalProvider />
+              {children}
+            </ConvexClientProvider>
+          </ClerkProvider>
+        </Suspense>
       </body>
     </html>
   )
