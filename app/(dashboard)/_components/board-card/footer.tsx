@@ -27,6 +27,8 @@ export const Footer = ({
     onClick();
   }
 
+  console.log(isFavorite);
+
   return (
     <div className="relative bg-white p-3">
       <p className="text-[13px] truncate max-w-[calc(100% - 10px)]">
