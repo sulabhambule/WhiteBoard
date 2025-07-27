@@ -27,7 +27,7 @@ export const Footer = ({
     onClick();
   }
 
-  console.log(isFavorite);
+  // console.log(isFavorite);
 
   return (
     <div className="relative bg-white p-3">

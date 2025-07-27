@@ -52,19 +52,16 @@ export const get = query({
         .collect();
     }
 
-    const boardWithFavoriteRelation = boards.map((board) => {
-      return ctx.db
+    const boardWithFavoriteRelation = boards.map(async (board) => {
+      const favourite = await ctx.db
         .query("userFavorites")
-        .withIndex("by_user_board", (q) =>
-          q.eq("userId", identity.subject).eq("boardId", board._id)
+        .withIndex("by_user_board", (q) => q.eq("userId", identity.subject).eq("boardId", board._id)
         )
-        .unique()
-        .then((favourite) => {
-          return {
-            ...board,
-            isFavorite: !!favourite,
-          };
-        });
+        .unique();
+      return {
+        ...board,
+        isFavorite: !!favourite,
+      };
     });
 
     const boardWithFavoriteBoolean = Promise.all(boardWithFavoriteRelation);
