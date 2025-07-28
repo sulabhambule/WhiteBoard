@@ -1,5 +1,5 @@
 "use client"
-import { Circle, MousePointer2, Pencil, Redo2, Square, StickyNote, Type, Undo2 } from "lucide-react"
+import { Circle, Eraser, MousePointer2, Pencil, Redo2, Square, StickyNote, Type, Undo2 } from "lucide-react"
 import { ToolButton } from "./tool-button"
 import { CanvasMode, type CanvasState, LayerType } from "@/types/canvas"
 
@@ -95,6 +95,21 @@ export const Toolbar = ({ canvasState, setCanavasState, undo, redo, canUndo, can
             })
           }
           isActive={canvasState.mode === CanvasMode.Pencil}
+        />
+
+        <div className="w-full mt-1">
+          <div className="h-0.5 bg-gradient-to-r from-transparent via-indigo-200 to-transparent rounded-full"></div>
+        </div>
+
+        <ToolButton
+          label="Erasor"
+          icon={Eraser}
+          onClick={() =>
+            setCanavasState({
+              mode: CanvasMode.Erasing,
+            })
+          }
+          isActive={canvasState.mode === CanvasMode.Erasing}
         />
 
         <div className="w-full mt-1">

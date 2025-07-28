@@ -44,10 +44,40 @@ import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
 const MAX_LAYERS = 200;
+const ERASE_RADIUS = 10;
 
 interface CanvasProps {
   boardId: string,
 }
+
+function findLayerAtPoint(
+  layers: Map<string, LiveObject<any>>,
+  layerIds: string[],
+  point: Point
+): string | null {
+  for (const id of layerIds) {
+    const layer = layers.get(id);
+    if (!layer) continue;
+
+    const type = layer.get("type") as LayerType;
+    const x = layer.get("x") as number;
+    const y = layer.get("y") as number;
+    const width = layer.get("width") as number;
+    const height = layer.get("height") as number;
+
+    // Simple bounding box hit test with some padding for eraser radius
+    if (
+      point.x >= x - ERASE_RADIUS &&
+      point.x <= x + width + ERASE_RADIUS &&
+      point.y >= y - ERASE_RADIUS &&
+      point.y <= y + height + ERASE_RADIUS
+    ) {
+      return id;
+    }
+  }
+  return null;
+}
+
 
 export const Canvas = ({
   boardId
@@ -62,6 +92,11 @@ export const Canvas = ({
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: CanvasMode.None,
   });
+
+  const [isPointerDown, setIsPointerDown] = useState(false);
+
+
+  const [localCursor, setLocalCursor] = useState<Point | null>(null);
 
   const pencilDraft = useSelf((me) => me.presence.pencilDraft);
 
@@ -80,6 +115,43 @@ export const Canvas = ({
   const history = useHistory();
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
+
+  const eraseAtPoint = useMutation(({ storage, setMyPresence }, point: Point) => {
+    const liveLayers = storage.get("layers");
+    const liveLayerIds = storage.get("layerIds");
+    const toDelete: string[] = [];
+
+    for (const id of liveLayerIds) {
+      const layer = liveLayers.get(id);
+      if (!layer) continue;
+
+      const x = layer.get("x");
+      const y = layer.get("y");
+      const width = layer.get("width");
+      const height = layer.get("height");
+
+      // If point is inside layer's bounding box + erase radius padding
+      if (
+        point.x >= x - ERASE_RADIUS &&
+        point.x <= x + width + ERASE_RADIUS &&
+        point.y >= y - ERASE_RADIUS &&
+        point.y <= y + height + ERASE_RADIUS
+      ) {
+        toDelete.push(id);
+      }
+    }
+
+    if (toDelete.length) {
+      for (const id of toDelete) {
+        liveLayers.delete(id);
+        const index = liveLayerIds.indexOf(id);
+        if (index !== -1) liveLayerIds.delete(index);
+      }
+      // Clear selection after erasing
+      setMyPresence({ selection: [] }, { addToHistory: true });
+    }
+  }, []);
+
 
   const insertLayer = useMutation((
     { storage, setMyPresence },
@@ -184,6 +256,7 @@ export const Canvas = ({
       })
     }
   }, [])
+
 
   const continueDrawing = useMutation((
     { self, setMyPresence },
@@ -317,6 +390,7 @@ export const Canvas = ({
     e.preventDefault();
 
     const current = pointerEventToCanvasPoint(e, camera);
+    setLocalCursor(current);
 
     if (canvasState.mode === CanvasMode.Pressing) {
       startMutliSelection(current, canvasState.origin)
@@ -328,12 +402,21 @@ export const Canvas = ({
       resizeSelecetedLayer(current);
     } else if (canvasState.mode === CanvasMode.Pencil) {
       continueDrawing(current, e);
+    } else if (canvasState.mode === CanvasMode.Erasing) {
+      if (isPointerDown) {
+        eraseAtPoint(current);
+        setMyPresence({ selection: [] }, { addToHistory: true });
+      }
+      return;
     }
+
 
     setMyPresence({ cursor: current });
   }, [
     camera,
     canvasState,
+    isPointerDown,
+    eraseAtPoint,
     continueDrawing,
     updateSelectionNet,
     startMutliSelection,
@@ -345,12 +428,15 @@ export const Canvas = ({
     { setMyPresence }
   ) => {
     setMyPresence({ cursor: null });
+    setIsPointerDown(false); // <-- also reset on pointer leave
+    setLocalCursor(null);
   }, []);
 
   const onPointerDown = useCallback((
     e: React.PointerEvent,
   ) => {
     const point = pointerEventToCanvasPoint(e, camera);
+    setLocalCursor(point);
     if (canvasState.mode === CanvasMode.Inserting) {
       return;
     }
@@ -360,12 +446,22 @@ export const Canvas = ({
       return;
     }
 
+    setLocalCursor(point);
+    setIsPointerDown(true);
+
+
+    if (canvasState.mode === CanvasMode.Erasing) {
+      eraseAtPoint(point);
+      return;
+    }
+
     setCanvasState({ origin: point, mode: CanvasMode.Pressing });
   }, [
     camera,
     canvasState.mode,
     setCanvasState,
-    startDrawing
+    startDrawing,
+    eraseAtPoint
   ]);
 
   const onPointerUp = useMutation((
@@ -373,7 +469,8 @@ export const Canvas = ({
     e
   ) => {
     const point = pointerEventToCanvasPoint(e, camera);
-
+    setIsPointerDown(false);  // <-- pointer released
+    setLocalCursor(null);
     if (
       canvasState.mode === CanvasMode.None ||
       canvasState.mode === CanvasMode.Pressing
@@ -411,6 +508,12 @@ export const Canvas = ({
     e: React.PointerEvent,
     layerId: string,
   ) => {
+    const point = pointerEventToCanvasPoint(e, camera);
+    if (canvasState.mode === CanvasMode.Erasing) {
+      eraseAtPoint(point);
+      return;
+    }
+
     if (
       canvasState.mode === CanvasMode.Pencil ||
       canvasState.mode === CanvasMode.Inserting
@@ -421,7 +524,6 @@ export const Canvas = ({
     history.pause();
     e.stopPropagation()
 
-    const point = pointerEventToCanvasPoint(e, camera);
 
     if (!self.presence.selection.includes(layerId)) {
       setMyPresence({ selection: [layerId] }, { addToHistory: true })
@@ -432,6 +534,7 @@ export const Canvas = ({
   }, [
     camera,
     history,
+    eraseAtPoint,
     setCanvasState,
     canvasState.mode,
   ])
@@ -550,6 +653,16 @@ export const Canvas = ({
                 y={0}
               />
             )}
+
+          {canvasState.mode === CanvasMode.Erasing && localCursor && (
+            <circle
+              cx={localCursor.x}
+              cy={localCursor.y}
+              r={ERASE_RADIUS}
+              className="fill-red-500/20 stroke-red-500 stroke-1 pointer-events-none"
+            />
+          )}
+
         </g>
       </svg>
     </main>

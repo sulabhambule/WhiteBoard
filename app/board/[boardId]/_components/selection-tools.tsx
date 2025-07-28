@@ -71,10 +71,8 @@ export const SelectionTools = memo(({
     selection.forEach((id) => {
       liveLayers.get(id)?.set("fill", fill);
     });
-  }, [
-    selection,
-    setLastUsedColor
-  ])
+  },
+    [selection, setLastUsedColor])
 
   const deleteLayers = useDeleteLayers();
   const selectionBounds = useSelectionBounds();
