@@ -111,8 +111,7 @@ export const Canvas = ({
     setCanvasState({
       mode: CanvasMode.None,
     });
-  },
-    [lastUsedColor]);
+  }, [lastUsedColor]);
 
   const translateSelectedLayers = useMutation((
     { storage, self },
@@ -333,13 +332,13 @@ export const Canvas = ({
 
     setMyPresence({ cursor: current });
   }, [
-    canvasState,
-    resizeSelecetedLayer,
     camera,
-    translateSelectedLayers,
-    startMutliSelection,
+    canvasState,
+    continueDrawing,
     updateSelectionNet,
-    continueDrawing
+    startMutliSelection,
+    resizeSelecetedLayer,
+    translateSelectedLayers,
   ]);
 
   const onPointerLeave = useMutation((
@@ -395,18 +394,17 @@ export const Canvas = ({
 
     history.resume();
   }, [
-    setCanvasState,
     camera,
-    canvasState,
     history,
+    canvasState,
     insertLayer,
+    setCanvasState,
     setCanvasState,
     unselectLayers,
     inserPath
   ]);
 
   const selections = useOthersMapped((other) => other.presence.selection);
-
 
   const onLayerPointerDown = useMutation((
     { self, setMyPresence },
@@ -432,9 +430,9 @@ export const Canvas = ({
     setCanvasState({ mode: CanvasMode.Translating, current: point });
 
   }, [
-    setCanvasState,
     camera,
     history,
+    setCanvasState,
     canvasState.mode,
   ])
 

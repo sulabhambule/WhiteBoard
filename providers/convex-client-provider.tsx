@@ -3,7 +3,7 @@
 // import { ReactNode } from 'react'
 import { Authenticated, AuthLoading, ConvexReactClient } from 'convex/react'
 import { ConvexProviderWithClerk } from 'convex/react-clerk'
-import { useAuth } from '@clerk/nextjs'
+import { ClerkProvider, useAuth } from '@clerk/nextjs'
 import { Loading } from '@/components/auth/loading'
 
 
@@ -29,13 +29,13 @@ export default function ConvexClientProvider({
   children,
 }: ConvexClientProviderProps) {
   return (
-    // <ClerkProvider>
-    <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-      <Authenticated>{children}</Authenticated>
-      <AuthLoading>
-        <Loading />
-      </AuthLoading>
-    </ConvexProviderWithClerk>
-    // </ClerkProvider>
+    <ClerkProvider>
+      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+        <Authenticated>{children}</Authenticated>
+        <AuthLoading>
+          <Loading />
+        </AuthLoading>
+      </ConvexProviderWithClerk>
+    </ClerkProvider>
   );
 }
