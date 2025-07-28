@@ -43,7 +43,7 @@ export const Text = ({
     newValue: string
   ) => {
     const liveLayers = storage.get("layers");
-    liveLayers.get(id)?.set("value", newValue);
+    liveLayers.get(id)?.update({ value: newValue });
   }, []);
 
   const handleContentChange = (e: ContentEditableEvent) => {

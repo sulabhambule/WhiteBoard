@@ -50,34 +50,6 @@ interface CanvasProps {
   boardId: string,
 }
 
-function findLayerAtPoint(
-  layers: Map<string, LiveObject<any>>,
-  layerIds: string[],
-  point: Point
-): string | null {
-  for (const id of layerIds) {
-    const layer = layers.get(id);
-    if (!layer) continue;
-
-    const type = layer.get("type") as LayerType;
-    const x = layer.get("x") as number;
-    const y = layer.get("y") as number;
-    const width = layer.get("width") as number;
-    const height = layer.get("height") as number;
-
-    // Simple bounding box hit test with some padding for eraser radius
-    if (
-      point.x >= x - ERASE_RADIUS &&
-      point.x <= x + width + ERASE_RADIUS &&
-      point.y >= y - ERASE_RADIUS &&
-      point.y <= y + height + ERASE_RADIUS
-    ) {
-      return id;
-    }
-  }
-  return null;
-}
-
 
 export const Canvas = ({
   boardId
